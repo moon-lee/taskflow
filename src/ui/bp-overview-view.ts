@@ -30,6 +30,35 @@ function heart(color: string): unknown {
   </svg>`;
 }
 
+function dayNightIcon(takenAt: string): unknown {
+  const hour = new Date(takenAt).getHours();
+  const isDay = hour >= 6 && hour < 18;
+  if (isDay) {
+    return html`<svg
+      class="daynight-icon"
+      viewBox="0 0 24 24"
+      fill="none"
+      aria-label="Day"
+    >
+      <circle cx="12" cy="12" r="5" stroke="#FF9500" stroke-width="2" />
+      <path
+        d="M12 2v2M12 20v2M4 12H2M22 12h-2M6 6L4 4M20 20l-2-2M6 18l-2 2M20 6l-2 2"
+        stroke="#FF9500"
+        stroke-width="2"
+        stroke-linecap="round"
+      />
+    </svg>`;
+  }
+  return html`<svg
+    class="daynight-icon"
+    viewBox="0 0 24 24"
+    fill="none"
+    aria-label="Night"
+  >
+    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" fill="#C7C7CC" />
+  </svg>`;
+}
+
 function withSeconds(iso: string): string {
   const s = String(iso);
   return s.length === 16 ? `${s}:00` : s;
@@ -49,8 +78,8 @@ export class BpOverviewView extends Base {
   finance: any = null;
   rows: Array<{ id: number; sys: number; dia: number; taken_at: string }> = [];
   error = '';
-  sys = 120;
-  dia = 80;
+  sys = 119;
+  dia = 79;
   editingId: number | null = null;
   editTakenAt: string | null = null;
   errors: Record<string, string> = {};
@@ -184,6 +213,11 @@ export class BpOverviewView extends Base {
     >`;
   }
 
+  private _statusColor(): string {
+    const status = classifyStatus(this.sys, this.dia);
+    return STATUS_COLORS[status];
+  }
+
   private _pagedRows(): Array<{
     id: number;
     sys: number;
@@ -207,8 +241,8 @@ export class BpOverviewView extends Base {
   }
 
   private _resetForm(): void {
-    this.sys = 120;
-    this.dia = 80;
+    this.sys = 119;
+    this.dia = 79;
     this.editingId = null;
     this.editTakenAt = null;
     this.errors = {};
@@ -307,7 +341,6 @@ export class BpOverviewView extends Base {
           <div class="section">
             <div class="section-header">
               <h3 class="section-title">Summary</h3>
-              ${this._badge()}
             </div>
             <div class="summary-card">
               <div class="summary-hero">
@@ -330,7 +363,10 @@ export class BpOverviewView extends Base {
               </div>
               <div class="summary-entry">
                 <div class="summary-fields">
-                  <div class="summary-stepper-row">
+                  <div
+                    class="summary-stepper-row"
+                    style="--summary-status-color:${this._statusColor()}"
+                  >
                     <label>SYS</label>
                     <button
                       class="stepper"
@@ -360,7 +396,10 @@ export class BpOverviewView extends Base {
                     </button>
                   </div>
                   ${this.errors.sys ? html`<p class="field-error">${this.errors.sys}</p>` : ''}
-                  <div class="summary-stepper-row" style="margin-top:12px">
+                  <div
+                    class="summary-stepper-row"
+                    style="--summary-status-color:${this._statusColor()}"
+                  >
                     <label>DIA</label>
                     <button
                       class="stepper"
@@ -424,6 +463,14 @@ export class BpOverviewView extends Base {
               <div class="chart-card">
                 <canvas id="history-chart"></canvas>
               </div>
+              <div class="chart-legend">
+                <span class="chart-legend-item"
+                  ><span class="chart-dot sys"></span>SYS</span
+                >
+                <span class="chart-legend-item"
+                  ><span class="chart-dot dia"></span>DIA</span
+                >
+              </div>
             </div>
             ${
               this.rows.length === 0
@@ -435,6 +482,7 @@ export class BpOverviewView extends Base {
                       <thead>
                         <tr>
                           <th>Date</th>
+                          <th>Time Period</th>
                           <th class="num">SYS</th>
                           <th class="num">DIA</th>
                           <th>Status</th>
@@ -448,6 +496,7 @@ export class BpOverviewView extends Base {
                             <td class="date">
                               ${r.taken_at.slice(0, 16).replace('T', ' ')}
                             </td>
+                            <td>${dayNightIcon(r.taken_at)}</td>
                             <td class="num sys">${r.sys}</td>
                             <td class="num dia">${r.dia}</td>
                             <td>
@@ -459,13 +508,13 @@ export class BpOverviewView extends Base {
                             </td>
                             <td class="actions">
                               <button
-                                class="btn btn-secondary"
+                                class="btn btn-secondary btn-sm"
                                 @click=${() => this._startEdit(r)}
                               >
                                 Edit
                               </button>
                               <button
-                                class="btn-danger"
+                                class="btn btn-danger btn-sm"
                                 @click=${() => this._remove(r.id)}
                               >
                                 Delete

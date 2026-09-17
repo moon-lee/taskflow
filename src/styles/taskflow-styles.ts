@@ -97,19 +97,22 @@ export const taskflowStyles = css`
     justify-content: center;
   }
   .summary-actions .btn-primary {
-    flex: 1;
+    align-self: center;
+    padding: 8px 16px;
+    font-size: var(--ff-font-base, 14px);
   }
   .summary-stepper-row {
     display: flex;
     align-items: center;
     gap: 8px;
+    padding: 6px;
   }
   .summary-stepper-row input {
     flex: 1;
     min-width: 0;
     background: var(--ff-bg-input, #3c3c3c);
     color: var(--ff-text, #d4d4d4);
-    border: 1px solid var(--ff-border, #3e3e3e);
+    border: 1px solid var(--summary-status-color, var(--ff-border, #3e3e3e));
     border-radius: 3px;
     padding: 6px 10px;
     font-size: var(--ff-font-base, 14px);
@@ -196,6 +199,11 @@ export const taskflowStyles = css`
     background: var(--ff-danger, #f48771);
     color: #fff;
   }
+  .btn-sm {
+    padding: 2px 12px;
+    font-size: var(--ff-font-sm, 12px);
+    border-radius: 3px;
+  }
   .filter-btn.on {
     border-color: var(--ff-accent, #007acc);
     color: var(--ff-text-strong, #fff);
@@ -266,10 +274,11 @@ export const taskflowStyles = css`
     width: 100%;
     border-collapse: collapse;
     font-size: var(--ff-font-base, 14px);
+    table-layout: fixed;
   }
   .history-table thead th {
-    text-align: left;
-    padding: 10px 16px;
+    text-align: center;
+    padding: 10px 8px;
     font-size: var(--ff-font-sm, 12px);
     font-weight: 700;
     text-transform: uppercase;
@@ -280,13 +289,24 @@ export const taskflowStyles = css`
   }
   .history-table thead th.num,
   .history-table td.num {
-    text-align: right;
+    text-align: center;
     font-variant-numeric: tabular-nums;
   }
   .history-table tbody td {
-    padding: 12px 16px;
+    padding: 12px 8px;
     border-bottom: 1px solid var(--ff-border, #3e3e3e);
     vertical-align: middle;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .history-table tbody td.date {
+    text-align: left;
+  }
+  .history-table tbody td.actions {
+    text-align: right;
+    white-space: nowrap;
   }
   .history-table tbody tr:last-child td {
     border-bottom: none;
@@ -302,7 +322,36 @@ export const taskflowStyles = css`
   }
   .history-table td.date {
     color: var(--ff-text-muted, #858585);
-    white-space: nowrap;
+  }
+  .daynight-icon {
+    width: 18px;
+    height: 18px;
+    display: inline-block;
+    vertical-align: middle;
+  }
+  .chart-legend {
+    display: flex;
+    gap: 12px;
+    margin-top: 8px;
+  }
+  .chart-legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: var(--ff-font-sm, 12px);
+    color: var(--ff-text-muted, #858585);
+  }
+  .chart-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+  .chart-dot.sys {
+    background: #ff3b30;
+  }
+  .chart-dot.dia {
+    background: var(--ff-accent, #007acc);
   }
   .history-table td.actions {
     text-align: right;
@@ -311,5 +360,7 @@ export const taskflowStyles = css`
   .history-table td.actions .btn,
   .history-table td.actions .btn-danger {
     padding: 2px 12px;
+    font-size: var(--ff-font-sm, 12px);
+    border-radius: 3px;
   }
 `;

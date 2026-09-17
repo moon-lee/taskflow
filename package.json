@@ -8,32 +8,180 @@
     "id": "taskflow",
     "displayName": "Taskflow",
     "version": "0.1.0",
-    "description": "Taskflow extension",
-    "themeColor": "#6366F1",
-    "activationEvents": ["onView:taskflow"],
+    "description": "Taskflow trackers: blood pressure diary and todo list",
+    "themeColor": "#E53935",
+    "activationEvents": [
+      "onView:bp-diary"
+    ],
     "contributions": {
-      "views": [{ "id": "taskflow", "name": "Taskflow", "icon": "assets/icon.svg" }],
-      "commands": [{ "id": "taskflow.hello", "title": "Taskflow: Hello" }],
-      "navigation": [{ "id": "taskflow-main", "label": "Taskflow", "command": "taskflow.hello", "group": "Taskflow" }],
-      "configuration": [
-        { "key": "taskflow.themeColor", "type": "string", "label": "Accent color for icons, topbar actions, and in-view highlights (hex).", "default": "#6366F1", "pattern": "^#[0-9A-Fa-f]{6}$", "formatHint": "#RRGGBB", "placeholder": "#6366F1" }
+      "views": [
+        {
+          "id": "bp-diary",
+          "name": "BP Diary",
+          "icon": "assets/icon.svg"
+        }
       ],
-      "allowedCommands": ["taskflow.hello"],
-      "allowedUiEvents": []
+      "commands": [
+        {
+          "id": "taskflow.show-overview",
+          "title": "BP Diary: Overview"
+        },
+        {
+          "id": "taskflow.show-todos",
+          "title": "Todo List"
+        }
+      ],
+      "navigation": [
+        {
+          "id": "bp-diary-overview",
+          "label": "Overview",
+          "command": "taskflow.show-overview",
+          "group": "BP Diary"
+        },
+        {
+          "id": "taskflow-todos",
+          "label": "Todo List",
+          "command": "taskflow.show-todos",
+          "group": "Todo List"
+        }
+      ],
+      "configuration": [
+        {
+          "key": "taskflow.themeColor",
+          "type": "string",
+          "label": "Accent color for icons, topbar actions, and in-view highlights (hex).",
+          "default": "#E53935",
+          "pattern": "^#[0-9A-Fa-f]{6}$",
+          "formatHint": "#RRGGBB",
+          "placeholder": "#E53935"
+        }
+      ],
+      "allowedCommands": [
+        "taskflow.show-overview",
+        "taskflow.show-todos"
+      ],
+      "allowedUiEvents": [
+        "entry-create",
+        "entry-edit",
+        "entry-delete",
+        "todo-create",
+        "todo-toggle",
+        "todo-delete",
+        "todo-rename",
+        "todo-clear-completed"
+      ]
     },
+    "tables": [
+      {
+        "name": "taskflow_bp_readings",
+        "columns": [
+          {
+            "name": "id",
+            "type": "integer",
+            "primary": true,
+            "autoIncrement": true
+          },
+          {
+            "name": "sys",
+            "type": "integer",
+            "nullable": false,
+            "min": 0,
+            "max": 400
+          },
+          {
+            "name": "dia",
+            "type": "integer",
+            "nullable": false,
+            "min": 0,
+            "max": 400
+          },
+          {
+            "name": "taken_at",
+            "type": "datetime",
+            "nullable": false,
+            "index": true
+          },
+          {
+            "name": "created_at",
+            "type": "datetime",
+            "nullable": false,
+            "default": "now"
+          },
+          {
+            "name": "updated_at",
+            "type": "datetime",
+            "nullable": false,
+            "default": "now"
+          }
+        ]
+      },
+      {
+        "name": "taskflow_todos",
+        "columns": [
+          {
+            "name": "id",
+            "type": "integer",
+            "primary": true,
+            "autoIncrement": true
+          },
+          {
+            "name": "title",
+            "type": "text",
+            "nullable": false
+          },
+          {
+            "name": "is_done",
+            "type": "boolean",
+            "nullable": false,
+            "default": false
+          },
+          {
+            "name": "due_date",
+            "type": "date",
+            "nullable": true
+          },
+          {
+            "name": "priority",
+            "type": "text",
+            "nullable": false,
+            "default": "medium",
+            "enumOptions": [
+              "low",
+              "medium",
+              "high"
+            ]
+          },
+          {
+            "name": "created_at",
+            "type": "datetime",
+            "nullable": false,
+            "default": "now"
+          },
+          {
+            "name": "updated_at",
+            "type": "datetime",
+            "nullable": false,
+            "default": "now"
+          }
+        ]
+      }
+    ],
     "main": "src/main.ts"
   },
   "scripts": {
     "dev": "vite",
     "build": "node D:/finance_flow_ai/scripts/sdk/cli.mjs build .",
+    "test": "vitest run",
     "version:bump": "node scripts/version-bump.mjs",
     "release": "node scripts/version-bump.mjs && node D:/finance_flow_ai/scripts/sdk/cli.mjs build ."
   },
   "devDependencies": {
+    "typescript": "^5.5.0",
     "vite": "^5.4.0",
-    "typescript": "^5.5.0"
+    "vitest": "^2.1.9"
   },
   "dependencies": {
+    "chart.js": "^4.5.1",
     "lit": "^3.1.0"
   }
 }

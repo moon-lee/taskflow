@@ -2,6 +2,15 @@ export type TodoPriority = 'low' | 'medium' | 'high';
 
 const PRIORITIES: readonly string[] = ['low', 'medium', 'high'];
 
+/**
+ * SQLite has no BOOLEAN type — better-sqlite3 stores `is_done` as INTEGER
+ * 1/0 and returns numbers on read (see dao-service `coerceParam`). Mocks and
+ * dev doubles use real booleans. Accept both everywhere.
+ */
+export function isDoneFlag(value: unknown): boolean {
+  return value === true || value === 1;
+}
+
 export interface TodoFieldErrors {
   title?: string;
   dueDate?: string;
@@ -42,7 +51,7 @@ export async function toggleTodo(finance: any, id: number): Promise<boolean> {
     .find({ id })) as Array<{ id: number; is_done: boolean }>;
   const row = rows[0];
   if (!row) throw new Error(`todo ${id} not found`);
-  const next = !row.is_done;
+  const next = !isDoneFlag(row.is_done);
   await finance.db.table('taskflow_todos').update({ id }, { is_done: next });
   return next;
 }
@@ -90,7 +99,7 @@ function toOldShape(r: {
   const out: OldTodo = {
     id: Number(r.id),
     title: String(r.title),
-    isDone: r.is_done === true,
+    isDone: isDoneFlag(r.is_done),
   };
   if (typeof r.created_at === 'string' && r.created_at.length > 0)
     out.createdAt = r.created_at;
@@ -114,7 +123,7 @@ export async function counts(
   const rows = (await finance.db.table('taskflow_todos').find({})) as Array<{
     is_done: boolean;
   }>;
-  const done = rows.filter((r) => r.is_done === true).length;
+  const done = rows.filter((r) => isDoneFlag(r.is_done)).length;
   return { total: rows.length, active: rows.length - done, done };
 }
 

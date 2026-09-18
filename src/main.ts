@@ -11,7 +11,7 @@ export async function registerUIComponents(): Promise<void> {
 const openView =
   (finance: FinanceApi, childTag: string): (() => Promise<void>) =>
   async () => {
-    await finance.ui?.requestMount('bp-diary', { view: childTag });
+    await finance.ui?.requestMount('taskflow', { view: childTag });
   };
 
 export async function activate(
@@ -42,9 +42,9 @@ export async function activate(
   if (ctx.viewId && typeof document !== 'undefined') {
     const app = document.getElementById('app');
     if (app) {
-      const { BpDiaryOrchestrator } =
-        await import('./ui/bp-diary-orchestrator.js');
-      const el = document.createElement('bp-diary-orchestrator') as any;
+      const { TaskflowOrchestrator } =
+        await import('./ui/taskflow-orchestrator.js');
+      const el = document.createElement('taskflow-orchestrator') as any;
       app.innerHTML = '';
       app.appendChild(el);
       const baseData = {

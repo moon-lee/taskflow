@@ -16,9 +16,9 @@ const Base =
     : (class {} as unknown as typeof LitElement);
 const logger = new ExtensionLogger('taskflow');
 
-export type BpTag = 'bp-overview' | 'todo-list-view';
+export type TaskflowView = 'bp-overview' | 'todo-list-view';
 
-export class BpDiaryOrchestrator extends Base {
+export class TaskflowOrchestrator extends Base {
   static override styles =
     typeof HTMLElement !== 'undefined'
       ? ([
@@ -34,7 +34,7 @@ export class BpDiaryOrchestrator extends Base {
         ] as any)
       : [];
   finance: any = null;
-  view: BpTag = 'bp-overview';
+  view: TaskflowView = 'bp-overview';
   mountData: Record<string, unknown> = {};
   error = '';
 
@@ -52,7 +52,7 @@ export class BpDiaryOrchestrator extends Base {
     await this.pushFinance();
   }
 
-  navigate(tag: BpTag): void {
+  navigate(tag: TaskflowView): void {
     this.view = tag;
     (this as any).requestUpdate?.();
     void this.pushFinance();
@@ -218,10 +218,10 @@ export class BpDiaryOrchestrator extends Base {
 
 if (
   typeof customElements !== 'undefined' &&
-  !customElements.get('bp-diary-orchestrator')
+  !customElements.get('taskflow-orchestrator')
 ) {
   customElements.define(
-    'bp-diary-orchestrator',
-    BpDiaryOrchestrator as unknown as CustomElementConstructor,
+    'taskflow-orchestrator',
+    TaskflowOrchestrator as unknown as CustomElementConstructor,
   );
 }

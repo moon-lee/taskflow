@@ -1,20 +1,40 @@
 import { describe, it, expect } from 'vitest';
 import { validateTodo, toggleTodo } from '../src/services/todo-service.js';
 
-function mockTodos(rows: Array<{ id: number; title: string; is_done: boolean; due_date: string | null; priority: string }> = []) {
+function mockTodos(
+  rows: Array<{
+    id: number;
+    title: string;
+    is_done: boolean;
+    due_date: string | null;
+    priority: string;
+  }> = [],
+) {
   const data = rows.map((r) => ({ ...r }));
   return {
     db: {
       table: (name: string) => {
-        if (name !== 'taskflow_todos') throw new Error(`TableAccessDenied: ${name}`);
+        if (name !== 'taskflow_todos')
+          throw new Error(`TableAccessDenied: ${name}`);
         return {
           find: async () => data.slice(),
           insert: async (input: Record<string, unknown>) => {
             const id = Math.max(0, ...data.map((r) => r.id)) + 1;
-            data.push({ id, ...(input as { title: string; is_done: boolean; due_date: string | null; priority: string }) });
+            data.push({
+              id,
+              ...(input as {
+                title: string;
+                is_done: boolean;
+                due_date: string | null;
+                priority: string;
+              }),
+            });
             return { id };
           },
-          update: async (filter: { id: number }, patch: Record<string, unknown>) => {
+          update: async (
+            filter: { id: number },
+            patch: Record<string, unknown>,
+          ) => {
             const row = data.find((r) => r.id === filter.id);
             if (row) Object.assign(row, patch);
             return { affected: row ? 1 : 0 };
@@ -61,7 +81,15 @@ describe('validateTodo', () => {
 
 describe('toggleTodo', () => {
   it('flips is_done false → true → false', async () => {
-    const finance = mockTodos([{ id: 1, title: 'Buy milk', is_done: false, due_date: null, priority: 'medium' }]);
+    const finance = mockTodos([
+      {
+        id: 1,
+        title: 'Buy milk',
+        is_done: false,
+        due_date: null,
+        priority: 'medium',
+      },
+    ]);
     expect(await toggleTodo(finance, 1)).toBe(true);
     expect(await toggleTodo(finance, 1)).toBe(false);
   });
@@ -74,9 +102,21 @@ describe('toggleTodo', () => {
 describe('rename + clear + counts', () => {
   it('renameTodo rewrites the title', async () => {
     const { renameTodo } = await import('../src/services/todo-service.js');
-    const finance = mockTodos([{ id: 1, title: 'Buy milk', is_done: false, due_date: null, priority: 'medium' }]);
+    const finance = mockTodos([
+      {
+        id: 1,
+        title: 'Buy milk',
+        is_done: false,
+        due_date: null,
+        priority: 'medium',
+      },
+    ]);
     await renameTodo(finance, 1, 'Buy oat milk');
-    const rows = (await (finance.db.table('taskflow_todos') as { find: () => Promise<Array<{ title: string }>> }).find());
+    const rows = await (
+      finance.db.table('taskflow_todos') as {
+        find: () => Promise<Array<{ title: string }>>;
+      }
+    ).find();
     expect(rows[0].title).toBe('Buy oat milk');
   });
 
@@ -89,10 +129,20 @@ describe('rename + clear + counts', () => {
     const { clearCompleted } = await import('../src/services/todo-service.js');
     const finance = mockTodos([
       { id: 1, title: 'done', is_done: true, due_date: null, priority: 'low' },
-      { id: 2, title: 'open', is_done: false, due_date: null, priority: 'high' },
+      {
+        id: 2,
+        title: 'open',
+        is_done: false,
+        due_date: null,
+        priority: 'high',
+      },
     ]);
     expect(await clearCompleted(finance)).toBe(1);
-    const rows = (await (finance.db.table('taskflow_todos') as { find: () => Promise<Array<{ id: number }>> }).find());
+    const rows = await (
+      finance.db.table('taskflow_todos') as {
+        find: () => Promise<Array<{ id: number }>>;
+      }
+    ).find();
     expect(rows.map((r) => r.id)).toEqual([2]);
   });
 
@@ -100,20 +150,57 @@ describe('rename + clear + counts', () => {
     const { counts } = await import('../src/services/todo-service.js');
     const finance = mockTodos([
       { id: 1, title: 'done', is_done: true, due_date: null, priority: 'low' },
-      { id: 2, title: 'open', is_done: false, due_date: '2026-09-20', priority: 'high' },
+      {
+        id: 2,
+        title: 'open',
+        is_done: false,
+        due_date: '2026-09-20',
+        priority: 'high',
+      },
     ]);
-    await expect(counts(finance)).resolves.toEqual({ total: 2, active: 1, done: 1 });
+    await expect(counts(finance)).resolves.toEqual({
+      total: 2,
+      active: 1,
+      done: 1,
+    });
   });
 
-  it('listTodos returns the old camelCase shape sorted by id', async () => {
+  it('counts handles integer 0/1 from SQLite', async () => {
+    const { counts } = await import('../src/services/todo-service.js');
+    const finance = mockTodos([
+      { id: 1, title: 'done', is_done: 1, due_date: null, priority: 'low' },
+      {
+        id: 2,
+        title: 'open',
+        is_done: 0,
+        due_date: '2026-09-20',
+        priority: 'high',
+      },
+    ] as any);
+    await expect(counts(finance)).resolves.toEqual({
+      total: 2,
+      active: 1,
+      done: 1,
+    });
+  });
+
+  it('listTodos maps integer 0/1 to booleans', async () => {
     const { listTodos } = await import('../src/services/todo-service.js');
     const finance = mockTodos([
-      { id: 2, title: 'b', is_done: false, due_date: null, priority: 'medium' },
-      { id: 1, title: 'a', is_done: true, due_date: null, priority: 'medium' },
-    ]);
+      { id: 1, title: 'a', is_done: 1, due_date: null, priority: 'medium' },
+      { id: 2, title: 'b', is_done: 0, due_date: null, priority: 'medium' },
+    ] as any);
     await expect(listTodos(finance)).resolves.toEqual([
       { id: 1, title: 'a', isDone: true },
       { id: 2, title: 'b', isDone: false },
     ]);
+  });
+
+  it('toggleTodo flips integer 1 → false', async () => {
+    const { toggleTodo } = await import('../src/services/todo-service.js');
+    const finance = mockTodos([
+      { id: 1, title: 'x', is_done: 1, due_date: null, priority: 'medium' },
+    ] as any);
+    await expect(toggleTodo(finance, 1)).resolves.toBe(false);
   });
 });

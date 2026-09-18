@@ -1,23 +1,23 @@
 {
   "name": "taskflow",
-  "version": "0.1.0",
+  "version": "0.1.7",
   "private": true,
   "type": "module",
   "main": "src/main.ts",
   "financeExtension": {
     "id": "taskflow",
     "displayName": "Taskflow",
-    "version": "0.1.0",
+    "version": "0.1.7",
     "description": "Taskflow trackers: blood pressure diary and todo list",
-    "themeColor": "#E53935",
+    "themeColor": "#64748B",
     "activationEvents": [
-      "onView:bp-diary"
+      "onView:taskflow"
     ],
     "contributions": {
       "views": [
         {
-          "id": "bp-diary",
-          "name": "BP Diary",
+          "id": "taskflow",
+          "name": "Taskflow",
           "icon": "assets/icon.svg"
         }
       ],
@@ -33,16 +33,16 @@
       ],
       "navigation": [
         {
-          "id": "bp-diary-overview",
-          "label": "Overview",
+          "id": "taskflow-overview",
+          "label": "BP Diary",
           "command": "taskflow.show-overview",
-          "group": "BP Diary"
+          "group": "Task Flow"
         },
         {
           "id": "taskflow-todos",
           "label": "Todo List",
           "command": "taskflow.show-todos",
-          "group": "Todo List"
+          "group": "Task Flow"
         }
       ],
       "configuration": [
@@ -50,10 +50,10 @@
           "key": "taskflow.themeColor",
           "type": "string",
           "label": "Accent color for icons, topbar actions, and in-view highlights (hex).",
-          "default": "#E53935",
+          "default": "#64748B",
           "pattern": "^#[0-9A-Fa-f]{6}$",
           "formatHint": "#RRGGBB",
-          "placeholder": "#E53935"
+          "placeholder": "#64748B"
         }
       ],
       "allowedCommands": [
@@ -76,12 +76,6 @@
         "name": "taskflow_bp_readings",
         "columns": [
           {
-            "name": "id",
-            "type": "integer",
-            "primary": true,
-            "autoIncrement": true
-          },
-          {
             "name": "sys",
             "type": "integer",
             "nullable": false,
@@ -100,30 +94,12 @@
             "type": "datetime",
             "nullable": false,
             "index": true
-          },
-          {
-            "name": "created_at",
-            "type": "datetime",
-            "nullable": false,
-            "default": "now"
-          },
-          {
-            "name": "updated_at",
-            "type": "datetime",
-            "nullable": false,
-            "default": "now"
           }
         ]
       },
       {
         "name": "taskflow_todos",
         "columns": [
-          {
-            "name": "id",
-            "type": "integer",
-            "primary": true,
-            "autoIncrement": true
-          },
           {
             "name": "title",
             "type": "text",
@@ -150,18 +126,6 @@
               "medium",
               "high"
             ]
-          },
-          {
-            "name": "created_at",
-            "type": "datetime",
-            "nullable": false,
-            "default": "now"
-          },
-          {
-            "name": "updated_at",
-            "type": "datetime",
-            "nullable": false,
-            "default": "now"
           }
         ]
       }

@@ -68,6 +68,29 @@ export class TodoListView extends Base {
     (this as any).requestUpdate?.();
   }
 
+  private get managed(): boolean {
+    // Inside the panel the orchestrator owns all writes (it listens for our
+    // bubbled events). Standalone in dev (index.html VIEWS) there is no
+    // orchestrator, so the view writes directly.
+    // NOTE: Element.closest() does NOT cross shadow-root boundaries, and the
+    // orchestrator renders us inside its shadow DOM — so walk up via
+    // getRootNode().host instead.
+    const getRoot = (this as any).getRootNode;
+    if (typeof getRoot !== 'function') return false;
+    let node: any = getRoot.call(this);
+    while (node) {
+      const host = node.host;
+      if (!host) return false;
+      if (
+        typeof host.tagName === 'string' &&
+        host.tagName.toLowerCase() === 'taskflow-orchestrator'
+      )
+        return true;
+      node = typeof host.getRootNode === 'function' ? host.getRootNode() : null;
+    }
+    return false;
+  }
+
   private get visibleTodos(): Array<{
     id: number;
     title: string;
@@ -138,7 +161,7 @@ export class TodoListView extends Base {
         composed: true,
       }),
     );
-    if (this.finance) {
+    if (this.finance && !this.managed) {
       createTodo(this.finance, {
         ...input,
         is_done: false,
@@ -160,7 +183,7 @@ export class TodoListView extends Base {
         composed: true,
       }),
     );
-    if (this.finance) {
+    if (this.finance && !this.managed) {
       toggleTodo(this.finance, id).then(() => this.load());
     }
     setTimeout(() => {
@@ -201,7 +224,7 @@ export class TodoListView extends Base {
         composed: true,
       }),
     );
-    if (this.finance) {
+    if (this.finance && !this.managed) {
       renameTodo(this.finance, id, title).then(() => this.load());
     }
   }
@@ -219,7 +242,7 @@ export class TodoListView extends Base {
         composed: true,
       }),
     );
-    if (this.finance) {
+    if (this.finance && !this.managed) {
       deleteTodo(this.finance, id).then(() => this.load());
     }
   }
@@ -231,7 +254,7 @@ export class TodoListView extends Base {
         composed: true,
       }),
     );
-    if (this.finance) {
+    if (this.finance && !this.managed) {
       clearCompleted(this.finance).then(() => this.load());
     }
   }

@@ -116,6 +116,7 @@ export const taskflowStyles = css`
     border-radius: 3px;
     padding: 6px 10px;
     font-size: var(--ff-font-base, 14px);
+    font-family: inherit;
     outline: none;
   }
   .summary-stepper-row input:focus {
@@ -241,6 +242,7 @@ export const taskflowStyles = css`
     border-radius: 3px;
     padding: 6px 10px;
     font-size: var(--ff-font-base, 14px);
+    font-family: inherit;
     outline: none;
   }
   .chip-overdue {
@@ -264,6 +266,7 @@ export const taskflowStyles = css`
     border-radius: 3px;
     padding: 6px 10px;
     font-size: var(--ff-font-base, 14px);
+    font-family: inherit;
     outline: none;
   }
   .add-row input:focus,

@@ -11,7 +11,8 @@
     "description": "Taskflow trackers: blood pressure diary and todo list",
     "themeColor": "#64748B",
     "activationEvents": [
-      "onView:taskflow"
+      "onView:taskflow",
+      "onStartup"
     ],
     "contributions": {
       "views": [

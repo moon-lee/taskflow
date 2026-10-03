@@ -1,13 +1,13 @@
 {
   "name": "taskflow",
-  "version": "0.1.8",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
   "main": "src/main.ts",
   "financeExtension": {
     "id": "taskflow",
     "displayName": "Taskflow",
-    "version": "0.1.8",
+    "version": "0.2.0",
     "description": "Taskflow trackers: blood pressure diary and todo list",
     "themeColor": "#64748B",
     "activationEvents": [
@@ -30,9 +30,19 @@
         {
           "id": "taskflow.show-todos",
           "title": "Todo List"
+        },
+        {
+          "id": "taskflow.refresh",
+          "title": "Refresh Task Flow"
         }
       ],
       "navigation": [
+        {
+          "id": "taskflow-refresh",
+          "label": "Refresh",
+          "command": "taskflow.refresh",
+          "group": "Quick Links"
+        },
         {
           "id": "taskflow-overview",
           "label": "BP Diary",
@@ -59,7 +69,8 @@
       ],
       "allowedCommands": [
         "taskflow.show-overview",
-        "taskflow.show-todos"
+        "taskflow.show-todos",
+        "taskflow.refresh"
       ],
       "allowedUiEvents": [
         "entry-create",

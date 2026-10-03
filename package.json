@@ -1,13 +1,13 @@
 {
   "name": "taskflow",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "private": true,
   "type": "module",
   "main": "src/main.ts",
   "financeExtension": {
     "id": "taskflow",
     "displayName": "Taskflow",
-    "version": "0.2.0",
+    "version": "0.2.1",
     "description": "Taskflow trackers: blood pressure diary and todo list",
     "themeColor": "#64748B",
     "activationEvents": [

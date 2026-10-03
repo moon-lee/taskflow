@@ -272,7 +272,15 @@ export class TodoListView extends Base {
     const visible = this.visibleTodos;
     return html`
       <div class="topbar">
-        <span class="crumb-current">Todo List</span>
+        <span
+              class="crumb-link"
+              @click=${() => {
+                void this.finance?.ui?.requestMount('taskflow', { view: 'bp-overview' });
+              }}
+              >BP Diary</span
+            >
+            <span class="crumb-sep">/</span>
+            <span class="crumb-current">Taskflow · Todo List</span>
         <div class="spacer"></div>
         <button
           class="filter-btn ${this.filter === 'all' ? 'on' : ''}"

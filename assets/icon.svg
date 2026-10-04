@@ -1,5 +1,9 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-  <rect x="1.5" y="1.5" width="21" height="21" rx="5.5" fill="#252526" stroke="#858585" stroke-width="1.5"/>
-  <path d="M12 4.8l5.5 2v4.2c0 3.8-2.3 5.8-5.5 7.2-3.2-1.4-5.5-3.4-5.5-7.2V6.8z" fill="none" stroke="#858585" stroke-width="1.6" stroke-linejoin="round"/>
-  <path d="M9.3 11.6l2 2 3.4-3.8" fill="none" stroke="#f8fafc" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="-1.5 -1.5 95 95" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <!-- Taskflow uses the Todo List mark: this extension's work is the todo list, and
+       the shield-with-tick read as "protected" rather than "to do". Identical to
+       todo-list/assets/icon.svg, which stays the source of truth. -->
+  <rect x="0" y="0" width="92" height="92" rx="22" fill="#252526" stroke="#858585" stroke-width="3"/>
+  <path d="M23 30l7 7 11-13M23 55l7 7 11-13" stroke="#f8fafc" stroke-width="4"/>
+  <path d="M52 31h18M52 56h18" stroke="#858585" stroke-width="4"/>
+  <path d="M23 75h47" stroke="#858585" stroke-width="4"/>
 </svg>

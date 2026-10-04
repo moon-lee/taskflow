@@ -34,7 +34,7 @@ export class TaskflowOrchestrator extends Base {
         ] as any)
       : [];
   finance: any = null;
-  view: TaskflowView = 'bp-overview';
+  view: TaskflowView = 'todo-list-view';
   mountData: Record<string, unknown> = {};
   error = '';
 
@@ -47,8 +47,10 @@ export class TaskflowOrchestrator extends Base {
     this.finance = f;
     this.mountData = mount;
     const v = (mount.view ?? mount.viewId) as string | undefined;
-    if (v === 'todo-list-view') this.view = 'todo-list-view';
-    else this.view = 'bp-overview';
+    // Todo List is the default child view. The Navigation Panel still carries a
+    // "BP Diary" item, so it stays reachable; this only decides what opens first.
+    if (v === 'bp-overview') this.view = 'bp-overview';
+    else this.view = 'todo-list-view';
     await this.pushFinance();
   }
 

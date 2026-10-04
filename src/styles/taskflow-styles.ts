@@ -366,4 +366,179 @@ export const taskflowStyles = css`
     font-size: var(--ff-font-sm, 12px);
     border-radius: 3px;
   }
+
+  /* Todo list section header: counts on the left, filter controls on the right.
+     The shared .section-header is already flex with space-between, so this only
+     styles the two children. */
+  .todo-section-header {
+    gap: 12px;
+  }
+  .todo-counts {
+    font-size: var(--ff-font-sm, 12px);
+    font-weight: 500;
+    color: var(--ff-text-muted, #858585);
+    letter-spacing: 0.2px;
+    white-space: nowrap;
+  }
+  .todo-counts b {
+    color: var(--ff-text-strong, #fff);
+    font-weight: 700;
+  }
+  .todo-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .todo-filter {
+    background: var(--ff-bg-input, #3c3c3c);
+    color: var(--ff-text, #d4d4d4);
+    border: 1px solid var(--ff-border, #3e3e3e);
+    border-radius: 3px;
+    padding: 5px 8px;
+    font-size: var(--ff-font-sm, 12px);
+    font-family: inherit;
+    cursor: pointer;
+  }
+  .todo-filter:hover,
+  .todo-filter:focus {
+    border-color: var(--ff-accent, #6366f1);
+    outline: none;
+  }
+  /* Muted rather than primary: clearing is a maintenance action, not the
+     main thing you came to do on this screen. */
+  .todo-clear {
+    background: transparent;
+    color: var(--ff-text-muted, #858585);
+    border: 1px solid var(--ff-border, #3e3e3e);
+    border-radius: 3px;
+    padding: 5px 12px;
+    font-size: var(--ff-font-sm, 12px);
+    font-family: inherit;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .todo-clear:hover:not(:disabled) {
+    color: var(--ff-text, #d4d4d4);
+    border-color: var(--ff-accent, #6366f1);
+  }
+  .todo-clear:disabled {
+    opacity: 0.45;
+    cursor: default;
+  }
+  /* Blood pressure: one section, three panels — the two readings and the entry
+     form side by side. */
+  .bp-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    /* stretch, not start: all three cards share one height */
+    align-items: stretch;
+  }
+  .bp-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 14px;
+    border: 1px solid var(--ff-border, #3e3e3e);
+    border-radius: 6px;
+    background: var(--ff-bg-input, #2f2f2f);
+    min-width: 0;
+  }
+  .bp-panel-title {
+    margin: 0;
+    font-size: var(--ff-font-sm, 12px);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    color: var(--ff-text-muted, #858585);
+  }
+  /* Same filled background as the two reading cards — the entry is a third
+     panel of the same row, not a separate kind of thing. */
+  .bp-panel-entry {
+    background: var(--ff-bg-input, #2f2f2f);
+  }
+  .bp-card-value {
+    /* centred, so the two measurement numbers read as one pair */
+    text-align: center;
+    font-size: 34px;
+    font-weight: 700;
+    line-height: 1.1;
+    color: var(--ff-text-strong, #fff);
+    font-variant-numeric: tabular-nums;
+  }
+  .bp-card-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    font-size: var(--ff-font-sm, 12px);
+    color: var(--ff-text-muted, #858585);
+  }
+  /* Timestamp left, status badge pushed to the right edge of the card. */
+  .bp-card-meta .card-badge {
+    margin-left: auto;
+  }
+  /* When the meta row has nothing but the summary line, that line goes right
+     instead of sitting alone on the left. */
+  .bp-card-meta .stat-line:only-child {
+    margin-left: auto;
+  }
+  /* The entry is a single "SYS/DIA" field set in the same type as the two
+     reading values, so the row reads as three comparable panels rather than
+     two cards and a form. */
+  .bp-entry-row {
+    display: flex;
+    /* flex-start, not center: the action lines up with the SYS/DIA numbers
+       rather than floating between the label and the input. */
+    align-items: flex-start;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .bp-field {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  /* Identical treatment to .bp-panel-title, so SYS and DIA occupy the same slot
+     the other panels use for their titles and the three values align. */
+  .bp-field > span {
+    margin: 0;
+    font-size: var(--ff-font-sm, 12px);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    color: var(--ff-text-muted, #858585);
+  }
+  /* Values use the same type as the two reading cards, so the row reads as
+     three comparable panels rather than two cards and a form. */
+  .bp-field input {
+    width: 96px;
+    background: transparent;
+    border: none;
+    color: var(--ff-text-strong, #fff);
+    font-size: 34px;
+    font-weight: 700;
+    line-height: 1.1;
+    font-variant-numeric: tabular-nums;
+    font-family: inherit;
+    padding: 0;
+  }
+  .bp-field input:focus {
+    outline: none;
+  }
+  .bp-entry-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-left: auto;
+  }
+  /* Reserves the same slot as the SYS/DIA labels so the action sits on the
+     number row rather than the label row. */
+  .bp-entry-actions > span {
+    display: block;
+    height: 18px;
+  }
+  .bp-entry-actions .btn {
+    align-self: flex-end;
+  }
 `;

@@ -12,8 +12,51 @@ export function createMockFinance(): import('finance').FinanceApi {
     string,
     Record<string, (p?: unknown) => unknown>
   > = g.__mockServices;
+  // Data is persisted to localStorage so mock dev behaves like a database.
+  // Without it a reload silently empties every table, which looks exactly like
+  // writes failing rather than like the data never being stored.
+  const STORAGE_KEY = '__financeMockDb';
+  const STORE: { tables: Record<string, Record<string, unknown>>; nextId: number } = (() => {
+    try {
+      const raw = globalThis.localStorage?.getItem(STORAGE_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (parsed && typeof parsed === 'object' && parsed.tables) {
+          return { tables: parsed.tables, nextId: Number(parsed.nextId) || 1 };
+        }
+      }
+    } catch {
+      /* private mode or corrupt JSON: start empty rather than fail */
+    }
+    return { tables: {}, nextId: 1 };
+  })();
+  nextId = STORE.nextId;
+
+  function persist(): void {
+    const plain: Record<string, Record<string, unknown>> = {};
+    for (const [name, rows] of mem) {
+      const bucket: Record<string, unknown> = {};
+      for (const [id, row] of rows) bucket[String(id)] = row;
+      plain[name] = bucket;
+    }
+    STORE.nextId = nextId;
+    try {
+      globalThis.localStorage?.setItem(STORAGE_KEY, JSON.stringify({ tables: plain, nextId }));
+    } catch {
+      /* quota or private mode: a dev convenience, never fatal */
+    }
+  }
+
   const table = (name: string) => {
-    if (!mem.has(name)) mem.set(name, new Map());
+    if (!mem.has(name)) {
+      // Hydrate from the persisted store on first touch of a table.
+      const restored = new Map<number, Record<string, unknown>>();
+      const bucket = STORE.tables[name];
+      if (bucket) {
+        for (const [id, row] of Object.entries(bucket)) restored.set(Number(id), row);
+      }
+      mem.set(name, restored);
+    }
     const m = mem.get(name)!;
     return {
       find: async (filter = {}) =>
@@ -28,6 +71,7 @@ export function createMockFinance(): import('finance').FinanceApi {
         const id = nextId++;
         const r = { id, ...row };
         m.set(id, r);
+        persist();
         return { id };
       },
       update: async (
@@ -40,6 +84,7 @@ export function createMockFinance(): import('finance').FinanceApi {
             m.set(id, { ...r, ...patch });
             n++;
           }
+        if (n > 0) persist();
         return { affected: n };
       },
       delete: async (filter: Record<string, unknown>) => {
@@ -49,6 +94,7 @@ export function createMockFinance(): import('finance').FinanceApi {
             m.delete(id);
             n++;
           }
+        if (n > 0) persist();
         return { affected: n };
       },
       count: async (filter = {}) =>
@@ -86,4 +132,21 @@ export function createMockFinance(): import('finance').FinanceApi {
     events: { on: () => () => {}, emit: async () => {} },
     settings: { get: async () => null, set: async () => {} },
   } as never;
+}
+
+/**
+ * Empties every mock table. Exposed on `window` so a dev page can offer a reset
+ * control — otherwise stale rows after a reload are indistinguishable from a
+ * write that failed.
+ */
+export function resetMockDb(): void {
+  try {
+    globalThis.localStorage?.removeItem('__financeMockDb');
+  } catch {
+    /* nothing to clear */
+  }
+}
+
+if (typeof globalThis !== 'undefined') {
+  (globalThis as any).__resetMockDb = resetMockDb;
 }

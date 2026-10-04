@@ -271,56 +271,13 @@ export class TodoListView extends Base {
     const c = this.counts;
     const visible = this.visibleTodos;
     return html`
-      <div class="topbar">
-        <span
-              class="crumb-link"
-              @click=${() => {
-                void this.finance?.ui?.requestMount('taskflow', { view: 'bp-overview' });
-              }}
-              >BP Diary</span
-            >
-            <span class="crumb-sep">/</span>
-            <span class="crumb-current">Taskflow · Todo List</span>
+<div class="topbar">
+        <span class="crumb-current">Taskflow · Todo List</span>
         <div class="spacer"></div>
-        <button
-          class="filter-btn ${this.filter === 'all' ? 'on' : ''}"
-          @click=${() => {
-            this.filter = 'all';
-            (this as any).requestUpdate();
-          }}
-        >
-          All (${c.total})
-        </button>
-        <button
-          class="filter-btn ${this.filter === 'active' ? 'on' : ''}"
-          @click=${() => {
-            this.filter = 'active';
-            (this as any).requestUpdate();
-          }}
-        >
-          Active (${c.active})
-        </button>
-        <button
-          class="filter-btn ${this.filter === 'done' ? 'on' : ''}"
-          @click=${() => {
-            this.filter = 'done';
-            (this as any).requestUpdate();
-          }}
-        >
-          Done (${c.done})
-        </button>
-        <button
-          class="filter-btn"
-          ?disabled=${c.done === 0}
-          @click=${() => this._clearCompleted()}
-        >
-          Clear completed
-        </button>
       </div>
       <div class="view-container">
         <div class="view-container-inner">
           <h1>Todo List</h1>
-          <p>${c.active} active · ${c.done} done · ${c.total} total</p>
           <div class="section" style="margin-top:16px">
             <div class="section-header">
               <h3 class="section-title">Add Todo</h3>
@@ -368,7 +325,37 @@ export class TodoListView extends Base {
               ${this.errors.priority ? html`<p class="field-error">${this.errors.priority}</p>` : ''}
             </div>
           </div>
-          <div class="table-wrap" style="margin-top:16px">
+          <div class="section" style="margin-top:16px">
+            <div class="section-header todo-section-header">
+              <h3 class="section-title todo-counts">
+                <b>${c.active}</b> active · <b>${c.done}</b> done · <b>${c.total}</b> total
+              </h3>
+              <div class="todo-controls">
+                <select
+                  class="todo-filter"
+                  aria-label="Filter todos"
+                  .value=${this.filter}
+                  @change=${(e: Event) => {
+                    this.filter = (e.target as HTMLSelectElement)
+                      .value as TodoFilter;
+                    (this as any).requestUpdate();
+                  }}
+                >
+                  <option value="all">All</option>
+                  <option value="active">Active</option>
+                  <option value="done">Done</option>
+                </select>
+                <button
+                  class="todo-clear"
+                  ?disabled=${c.done === 0}
+                  @click=${() => this._clearCompleted()}
+                >
+                  Clear completed
+                </button>
+              </div>
+            </div>
+            <div class="section-body" style="padding:0">
+              <div class="table-wrap">
             <table style="width:100%;border-collapse:collapse">
               <thead>
                 <tr>
@@ -502,6 +489,8 @@ export class TodoListView extends Base {
                 }
               </tbody>
             </table>
+              </div>
+            </div>
           </div>
         </div>
       </div>
